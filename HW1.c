@@ -14,6 +14,8 @@ double generate_random();
 void draw_triangle(GLdouble points_vector[][2]);
 int check_array(GLdouble data[][2], double value);
 void mouseCallbackFunction(int button, int state, int x, int y);
+void normalize_pointer_positions();
+void print_positions(char* title);
 
 
 // Global variables
@@ -24,6 +26,9 @@ GLdouble pointer_positions[3][2] = {{0.0 ,0.0 }, {0.0 ,0.0}, {0.0 ,0.0}};
 
 #define ARRAY_COLUMN_SIZE 2
 #define ARRAY_ROW_SIZE 3
+#define MAX_WINDOW_WIDTH 512
+#define MAX_WINDOW_HEIGHT 512
+
 
 
 int main(int argc, char** argv ){
@@ -31,7 +36,7 @@ int main(int argc, char** argv ){
     // intializing window codes
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(512, 512);
+    glutInitWindowSize(MAX_WINDOW_WIDTH, MAX_WINDOW_WIDTH);
     glutInitWindowPosition(0,0);
     glutCreateWindow("Homework #1, Dadgar, Stu_no: 4003624016");
     initDisplay();
@@ -52,7 +57,7 @@ void initDisplay(){
     glClearColor(0.0, 0.0, 0.0, 1.0); 
 
     // set default color to white
-    glColor3f(0.0 ,0.0 ,0.0);
+    glColor3f(1.0 ,1.0 ,1.0);
     // set point size to 1
     glPointSize(1.0);
 
@@ -68,6 +73,7 @@ void mouseCallbackFunction(int button, int state, int x, int y){
         counter++; 
 
         printf("LOG: Mouse click detected. Location: %d,%d\n", x,y);
+        printf("LOG: counter= %d\n", counter);
     }
     if (counter == 3)
     {
@@ -78,11 +84,13 @@ void mouseCallbackFunction(int button, int state, int x, int y){
 
         glColor3f(red, green, blue);
 
-        glBegin(GL_TRIANGLES);
-            glVertex2dv(pointer_positions[0]);
-            glVertex2dv(pointer_positions[1]);
-            glVertex2dv(pointer_positions[2]);
-        glEnd();
+        print_positions((char*)"Drawing new triangle(Before normalization)");        
+        // normalize the values
+        normalize_pointer_positions();
+
+        print_positions((char*)"Drawing new triangle(After normalization)");
+
+        draw_triangle(pointer_positions);
 
         glFlush();
 
@@ -97,8 +105,10 @@ void displayCallbackFunction(){
     // clear the window
     glClear(GL_COLOR_BUFFER_BIT);
 
+
     // if the pointer_positions array containes 0 ( was not initialized )
     if(check_array(pointer_positions, 0.0) == 1){
+        printf("YES\n");
         // just draw a simple
         GLdouble pointer_positions[3][2] = {{-0.5,0}, {0.5,0}, {0,0.5}}; 
         draw_triangle(pointer_positions);
@@ -151,6 +161,24 @@ void set_pointer_positions_zero(){
     for(int i = 0;i < rows;i++)
         for(int j=0; j<columns; j++)
             pointer_positions[i][j] = 0;
+}
+
+// This function would normalize the pointer positions between -1 and 1
+void normalize_pointer_positions(){
+    int rows = ARRAY_ROW_SIZE;
+    int columns = ARRAY_COLUMN_SIZE;
+
+    for (int i = 0; i<rows; i++){
+        // Coefficients (Can be either 1 or -1 here)
+        int a1 = 1;
+        int b1 = 1;
+        if( pointer_positions[i][0] < (MAX_WINDOW_HEIGHT/2) )
+            a1 = -1;
+        if (pointer_positions[i][1] > (MAX_WINDOW_WIDTH / 2))
+            b1 = -1;
+        pointer_positions[i][0] = a1 * (pointer_positions[i][0] / MAX_WINDOW_WIDTH);
+        pointer_positions[i][1] = b1 * (pointer_positions[i][1] / MAX_WINDOW_HEIGHT);
+    }
 
 }
 // int get_array_row_size(GLdouble data[][2]){
@@ -161,4 +189,11 @@ void set_pointer_positions_zero(){
 // }
 double generate_random(){
     return ( (double)rand() / (double)RAND_MAX );
+}
+void print_positions(char* title){
+
+    printf("%s: x,y,z (%f,%f),(%f,%f), (%f,%f)\n", title,
+        pointer_positions[0][0], pointer_positions[0][1], 
+        pointer_positions[1][0], pointer_positions[1][1],
+        pointer_positions[2][0], pointer_positions[2][1]);
 }
