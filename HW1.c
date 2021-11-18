@@ -14,6 +14,7 @@ int check_array(GLdouble data[][2], double value);
 void mouseCallbackFunction(int button, int state, int x, int y);
 void normalize_pointer_positions();
 void print_positions(char* title);
+void print_pointer_status();
 
 
 // Global variables
@@ -26,6 +27,8 @@ GLdouble pointer_positions[3][2] = {{0.0 ,0.0 }, {0.0 ,0.0}, {0.0 ,0.0}};
 #define ARRAY_ROW_SIZE 3
 #define MAX_WINDOW_WIDTH 512
 #define MAX_WINDOW_HEIGHT 512
+#define GREEN   "\033[32m"      // GREEN Color for printf
+#define RESET   "\033[0m"       // Reset Coloring for printf
 
 
 
@@ -39,7 +42,7 @@ int main(int argc, char** argv ){
     glutCreateWindow("Homework #1, Dadgar, Stu_no: 4003624016");
     initDisplay();
 
-    // Register a display callback
+    // Register callbacks
     glutDisplayFunc(displayCallbackFunction);
     glutMouseFunc(mouseCallbackFunction);
 
@@ -48,7 +51,7 @@ int main(int argc, char** argv ){
 }
 
 void initDisplay(){
-    printf("initializing the window parameters\n");
+    printf("Initializing the window parameters\n");
     // initialize the window and parameters
 
     // set background color to black
@@ -70,8 +73,8 @@ void mouseCallbackFunction(int button, int state, int x, int y){
         pointer_positions[counter][1] = y;
         counter++; 
 
-        printf("LOG: Mouse click detected. Location: %d,%d\n", x,y);
-        printf("LOG: counter= %d\n", counter);
+        printf("LOG: Mouse click detected. Location: %d,%d,\t", x,y);
+        print_pointer_status();
     }
     if (counter == 3)
     {
@@ -81,12 +84,10 @@ void mouseCallbackFunction(int button, int state, int x, int y){
         double blue = generate_random();
 
         glColor3f(red, green, blue);
-
-        print_positions((char*)"Drawing new triangle(Before normalization)");        
+        
         // normalize the values
         normalize_pointer_positions();
-
-        print_positions((char*)"Drawing new triangle(After normalization)");
+        print_positions((char*)"New triangle Coordinates");
 
         draw_triangle(pointer_positions);
 
@@ -98,7 +99,8 @@ void mouseCallbackFunction(int button, int state, int x, int y){
     }
 }
 void displayCallbackFunction(){
-    printf("Display callback function invoked!\n");  
+    // for debug purposes
+    // printf("Display callback function invoked!\n");  
 
     // clear the window
     glClear(GL_COLOR_BUFFER_BIT);
@@ -106,7 +108,6 @@ void displayCallbackFunction(){
 
     // if the pointer_positions array containes 0 ( was not initialized )
     if(check_array(pointer_positions, 0.0) == 1){
-        printf("YES\n");
         // just draw a simple
         GLdouble pointer_positions[3][2] = {{-0.5,0}, {0.5,0}, {0,0.5}}; 
         draw_triangle(pointer_positions);
@@ -159,15 +160,13 @@ void normalize_pointer_positions(){
     int columns = ARRAY_COLUMN_SIZE;
 
     for (int i = 0; i<rows; i++){
-        // Coefficients (Can be either 1 or -1 here)
-        int a1 = 1;
-        int b1 = 1;
-        if( pointer_positions[i][0] < (MAX_WINDOW_HEIGHT/2) )
-            a1 = -1;
-        if (pointer_positions[i][1] > (MAX_WINDOW_WIDTH / 2))
-            b1 = -1;
-        pointer_positions[i][0] = a1 * (pointer_positions[i][0] / MAX_WINDOW_WIDTH);
-        pointer_positions[i][1] = b1 * (pointer_positions[i][1] / MAX_WINDOW_HEIGHT);
+        // Coefficients is to normalize the X and Y positions
+        double coefficient = 2.0;
+        double X = ( (pointer_positions[i][0] - (MAX_WINDOW_WIDTH / 2)) * coefficient) / MAX_WINDOW_WIDTH;
+        double Y = ( ((MAX_WINDOW_HEIGHT / 2) - pointer_positions[i][1]) * coefficient) / MAX_WINDOW_HEIGHT;  
+
+        pointer_positions[i][0] = X;
+        pointer_positions[i][1] = Y;
     }
 
 }
@@ -176,8 +175,26 @@ double generate_random(){
 }
 void print_positions(char* title){
 
-    printf("%s: x,y,z (%f,%f),(%f,%f), (%f,%f)\n", title,
+    printf("%s: (%f,%f),(%f,%f), (%f,%f)\n", title,
         pointer_positions[0][0], pointer_positions[0][1], 
         pointer_positions[1][0], pointer_positions[1][1],
         pointer_positions[2][0], pointer_positions[2][1]);
+}
+
+void print_pointer_status(){
+    switch (counter)
+    {
+    case 1:
+        printf("2 points to draw triangle\n");
+        break;
+    case 2:
+        printf("1 points to draw triangle\n");
+        break;
+    case 3:
+        printf(GREEN "\nYour beautiful triangle is drawn \nTo draw more click on the window\n" RESET);
+        break;
+    
+    default:
+        break;
+    }
 }
