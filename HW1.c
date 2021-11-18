@@ -9,8 +9,6 @@ void initDisplay();
 void displayCallbackFunction();
 void set_pointer_positions_zero();
 double generate_random();
-// int get_array_row_size(GLdouble data[][2]);
-// int get_array_column_size(GLdouble data[][2]);
 void draw_triangle(GLdouble points_vector[][2]);
 int check_array(GLdouble data[][2], double value);
 void mouseCallbackFunction(int button, int state, int x, int y);
@@ -133,8 +131,6 @@ void draw_triangle(GLdouble points_vector[][2]){
 // check an array array values equals to value or not 
 int check_array(GLdouble data[][2], double value){
 
-    // int rows = get_array_row_size(pointer_positions);
-    // int columns = get_array_column_size(pointer_positions);
     int rows = ARRAY_ROW_SIZE;
     int columns = ARRAY_COLUMN_SIZE;
 
@@ -148,12 +144,6 @@ int check_array(GLdouble data[][2], double value){
     return 1;
 }
 void set_pointer_positions_zero(){
-
-    // int rows = sizeof(pointer_positions) / sizeof(pointer_positions[0]);
-    // int columns = sizeof(pointer_positions[0]) - sizeof(pointer_positions[0][0]);
-
-    // int rows = get_array_row_size(pointer_positions);
-    // int columns = get_array_column_size(pointer_positions);
     int rows = ARRAY_ROW_SIZE;
     int columns = ARRAY_COLUMN_SIZE;
 
@@ -181,12 +171,6 @@ void normalize_pointer_positions(){
     }
 
 }
-// int get_array_row_size(GLdouble data[][2]){
-//     return sizeof(data) / ARRAY_COLUMN_SIZE;
-// }
-// int get_array_column_size(GLdouble data[][2]){
-//     return sizeof(data[0]) - sizeof(data[0][0]);
-// }
 double generate_random(){
     return ( (double)rand() / (double)RAND_MAX );
 }
