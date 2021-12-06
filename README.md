@@ -9,5 +9,17 @@ First of all make sure you've installed g++ compiler and glut library. <br>
 Then to run the project simply use this command: ```g++ HW1.c -o hw1.out -lGL -lGLU -lglut```
 
 ## Homework #2
-**Question:** Not given yet.
+**Question:** Please write a C code to implement a Ping-Pong game with OpenGL which works as follows:
+1. Define a small circle as a ball in a rectangular area.
+2. With a first mouse click (left button), the ball start moving toward the position clicked.
+3. When the ball reach border of the rectangle it is bounced just like when light hit a mirror.
+4. Define two small rectangles in areas close to the right and left sides which works like a tennis
+rocket when the ball hit them.
+5. The rocket moves up or down to the sides of rectangle by pressing some keys.
+6. Each player should prevent the ball hitting its side of the rectangle.
+7. If the ball hit the side behind the rocket the opposite player gets one score.
+8. A pop-up menu is opened with a right mouse click with 3 entries of "Exit", "Start over" and
+"Level". "Level" opens a sub menu with three entries of "Easy", "Medium" and "Hard".
+9. The initial speed of ball, is adjusted based on the level selected.
+10. The current scores of two players should be displayed somewhere on the display.
 
