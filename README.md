@@ -23,3 +23,8 @@ rocket when the ball hit them.
 9. The initial speed of ball, is adjusted based on the level selected.
 10. The current scores of two players should be displayed somewhere on the display.
 
+## Course-Examples
+This directory contains the examples recieved from Professor of this course.
+
+## Course Source
+The course reference is the book: Edward Angel, Dave Shreiner - Interactive Computer Graphics_ A Top-Down Approach with Shader-Based OpenGL, 6th Edition  -Addison Wesley (2011).
