@@ -3,12 +3,13 @@
 #include "debuggingFunctions.h"
 
 // define the border value of the window
-#define BOARDER 0.9
+#define BORDER 0.9
 
 // default value is zero, DON'T CHANGE THIS VALUE!!!!
 // if you want to enable debugging change this in the main.c function
 int DEBUG = 0;
 
+// the ball initializing position
 float BALL_POSITION[15][2] = {
     {-0.03,0.03}, //0
     {-0.04,0.015}, //1
@@ -24,7 +25,25 @@ float BALL_POSITION[15][2] = {
     {0.04,0.015}, //11
     {0.03,0.03}, // 12
     {0.015,0.04},  //13
-    {0,0.04}};  //14
+    {0,0.04}   //14
+    }; 
+
+ 
+// the first player position
+float PLAYER_ONE_POSIOTION[4][2] = {
+    {-0.8, -0.15},
+    {-0.8,  0.15},
+    {-0.75,  0.15},
+    {-0.75, -0.15}
+    }; 
+
+// the second player position
+float PLAYER_TWO_POSIOTION[4][2] = {
+    {0.8, -0.15},
+    {0.8,  0.15},
+    {0.75,  0.15},
+    {0.75, -0.15}
+    }; 
 
 
 void reset_ball_positions(){
@@ -77,28 +96,134 @@ void reset_ball_positions(){
     BALL_POSITION[14][1] = 0.04;
 
 }
+
+void reset_player_positions(){
+    /*
+        reset both player positions 
+    */
+
+   // reset first player
+    PLAYER_ONE_POSIOTION[0][0] = -0.8;
+    PLAYER_ONE_POSIOTION[0][1] = -0.15;
+
+    PLAYER_ONE_POSIOTION[1][0] = -0.8;
+    PLAYER_ONE_POSIOTION[1][1] = 0.15;
+
+    PLAYER_ONE_POSIOTION[2][0] = -0.75;
+    PLAYER_ONE_POSIOTION[2][1] = 0.15;
+
+    PLAYER_ONE_POSIOTION[3][0] = -0.75;
+    PLAYER_ONE_POSIOTION[3][1] = -0.15;
+
+    // reset second player
+    PLAYER_TWO_POSIOTION[0][0] = 0.8;
+    PLAYER_TWO_POSIOTION[0][1] = -0.15;
+
+    PLAYER_TWO_POSIOTION[1][0] = 0.8;
+    PLAYER_TWO_POSIOTION[1][1] = 0.15;
+
+    PLAYER_TWO_POSIOTION[2][0] = 0.75;
+    PLAYER_TWO_POSIOTION[2][1] = 0.15;
+
+    PLAYER_TWO_POSIOTION[3][0] = 0.75;
+    PLAYER_TWO_POSIOTION[3][1] = -0.15;
+
+}
+
+void change_player_position(int player, int position){
+    /*
+        player == 1 is player_one
+        player == 2 is player_two
+
+        if position > 0 then move up
+        else if pos < 0 then move down
+        */
+
+    switch (player) {
+        case 2:
+            /* FIRST PLAYER */
+
+            if (position > 0){
+
+                // check the highest y value in player1 that doesn't go beyond the borders
+                if (PLAYER_ONE_POSIOTION[1][1] + 0.05 < BORDER)
+                {
+                    // move all the y positions slightly up
+                    PLAYER_ONE_POSIOTION[0][1] += 0.05;
+                    PLAYER_ONE_POSIOTION[1][1] += 0.05;
+                    PLAYER_ONE_POSIOTION[2][1] += 0.05;
+                    PLAYER_ONE_POSIOTION[3][1] += 0.05;
+                }
+
+            } else if (position < 0){
+
+                // check the lowest y value in player1 that doesn't go beyond the borders
+                if(PLAYER_ONE_POSIOTION[0][1] - 0.05 > -1 * BORDER){
+                    // move all the y positions slightly down
+                    PLAYER_ONE_POSIOTION[0][1] -= 0.05;
+                    PLAYER_ONE_POSIOTION[1][1] -= 0.05;
+                    PLAYER_ONE_POSIOTION[2][1] -= 0.05;
+                    PLAYER_ONE_POSIOTION[3][1] -= 0.05;
+                }
+            }
+            break;
+
+
+        case 1:
+            /* SECOND PLAYER */
+
+            // check the highest y value in player2 that doesn't go beyond the borders
+            if(position > 0){
+                if (PLAYER_TWO_POSIOTION[1][1] + 0.05 < BORDER){
+                // move all the y positions slightly up
+                    PLAYER_TWO_POSIOTION[0][1] += 0.05;
+                    PLAYER_TWO_POSIOTION[1][1] += 0.05;
+                    PLAYER_TWO_POSIOTION[2][1] += 0.05;
+                    PLAYER_TWO_POSIOTION[3][1] += 0.05;
+            }
+
+            } else if (position < 0){
+
+                // check the lowest y value in player2 that doesn't go beyond the borders
+                if (PLAYER_TWO_POSIOTION[0][1] - 0.05 > -1 * BORDER ){
+                        
+                    // move all the y positions slightly down
+                    PLAYER_TWO_POSIOTION[0][1] -= 0.05;
+                    PLAYER_TWO_POSIOTION[1][1] -= 0.05;
+                    PLAYER_TWO_POSIOTION[2][1] -= 0.05;
+                    PLAYER_TWO_POSIOTION[3][1] -= 0.05;
+                }
+
+            }
+            break;
+
+
+        default:
+            // print an error and close the program
+            print_input_player_error(player, 1);
+            exit(1);
+            break;
+   }
+}
+
 void display_squares(){
     /*
         draw the squares for each player
     */
 
-   // make the players color to red
-   glColor3f(1,0,0);
+    // make the players color to red
+    glColor3f(1,0,0);
 
-   // first player
-   glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(-0.8, -0.15);
-        glVertex2f(-0.8,  0.15);
-        glVertex2f(-0.75,  0.15);
-        glVertex2f(-0.75, -0.15);
+    // first player
+    glBegin(GL_TRIANGLE_FAN);
+    for(int i=0; i < 4;i++)
+            glVertex2fv(PLAYER_ONE_POSIOTION[i]);
     glEnd();
 
     // second player
     glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(0.8, -0.15);
-        glVertex2f(0.8,  0.15);
-        glVertex2f(0.75,  0.15);
-        glVertex2f(0.75, -0.15);
+    for(int i=0; i < 4;i++)
+        glVertex2fv(PLAYER_TWO_POSIOTION[i]);
     glEnd();
 
     // make the color to defualt black
@@ -116,7 +241,7 @@ void change_ball_position(int index){
         BALL_POSITION[index][1] += 0.01;
 
         // if it reach the borders
-        if (BALL_POSITION[index][0] > BOARDER){
+        if (BALL_POSITION[index][0] > BORDER){
             reset_ball_positions();
 
             reset_ball(DEBUG);
@@ -154,10 +279,10 @@ void display_game_window(){
     */
     glLineWidth(2.0);
     glBegin(GL_LINE_LOOP);
-        glVertex2f(-1 * BOARDER, -1 * BOARDER);
-        glVertex2f(-1 * BOARDER, BOARDER);
-        glVertex2f(BOARDER, BOARDER);
-        glVertex2f(BOARDER, -1 * BOARDER);
+        glVertex2f(-1 * BORDER, -1 * BORDER);
+        glVertex2f(-1 * BORDER, BORDER);
+        glVertex2f(BORDER, BORDER);
+        glVertex2f(BORDER, -1 * BORDER);
     glEnd();
 
 }

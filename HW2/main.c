@@ -13,6 +13,7 @@ extern int DEBUG;
 
 void display_objects(int info);
 void init_display();
+void keyboardCallbackFunction(unsigned char key, int x, int y);
 
 int main(int argc, char** argv){
     glutInit(&argc, argv);
@@ -25,6 +26,8 @@ int main(int argc, char** argv){
     // DEBUG = 1;
     
     init_display();
+
+    glutKeyboardFunc(keyboardCallbackFunction);
 
     glutMainLoop();
 
@@ -64,4 +67,41 @@ void display_objects(int info){
     glFlush();
     glutTimerFunc(20, display_objects, 0);
 
+}
+
+void keyboardCallbackFunction(unsigned char key, int x, int y){
+    /*
+        keyboardCallbackFunction
+        change each player's square position 
+        player1 using 8,and 5
+        player2 using w and s
+    */
+
+   switch (key){
+       case '8':
+            // player 1 and move up
+            change_player_position(1, 1);
+            break;
+
+        case '5':
+            // player 1 and move down
+            change_player_position(1, -1);
+            break;
+
+        case 'w':
+            // player 2 and move up
+            change_player_position(2, 1);
+            break;
+
+        case 's':
+            // player 2 and move down
+            change_player_position(2, -1);
+            break;
+            
+        default:
+            break;
+   }
+    
+
+   
 }

@@ -2,7 +2,9 @@
 #include <stdio.h>
 
 
-#define GREEN_MESSAGE   "\033[32m"      // GREEN Color for printf
+#define MESSAGE_GREEN   "\033[32m"      // GREEN Color for printf
+#define MESSAGE_RED   "\033[31m"      // RED Color for printf
+
 #define RESET_MESSAGE_COLOR   "\033[0m"       // Reset Coloring for printf
 
 void print_ball_positions(float posx, float posy, int index, int debug_mode){
@@ -26,8 +28,15 @@ void reset_ball(int debug_mode){
     */
     if (debug_mode)
     {
-        printf(GREEN_MESSAGE "BALL position resets to center!\n" RESET_MESSAGE_COLOR);
+        printf(MESSAGE_GREEN "BALL position resets to center!\n" RESET_MESSAGE_COLOR);
     }
     
+}
+
+void print_input_player_error(int number, int debug_mode){
+    /*
+        if player number was an integer beside 0 and 1, raise an error and close the program
+    */
+   printf(MESSAGE_RED "The player number must be 0 or 1, the input value was: %d\n" RESET_MESSAGE_COLOR, number);
 }
 
