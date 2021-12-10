@@ -5,8 +5,9 @@
 
 // define the border value of the window
 #define BORDER 0.9
-// to increase the ball position or decrease
-int BALL_ACTION = 0;
+
+// this is the rate of ball moving
+int BALL_ACTION = -1;
 
 // default value is zero, DON'T CHANGE THIS VALUE!!!!
 // if you want to enable debugging change this in the main.c function
@@ -248,11 +249,12 @@ int change_ball_action( float player_y1, float player_y2,float player_x1, float 
     // else return the same ball action
     if ( (player_y1 < ball_y && ball_y < player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
 
-        if (BALL_ACTION == 0){
-            return 1;
-        } else{
-            return 0;
-        }
+        return BALL_ACTION * -1;
+        // if (BALL_ACTION  < 0){
+        //     return BALL_ACTION * -1;
+        // } else{
+        //     return BALL_ACTION;
+        // }
     } else 
         return BALL_ACTION;
 }
@@ -302,18 +304,22 @@ void change_ball_position(int index){
         change the ball in the way it is going
         index is the index of the ball
 
-        BALL_ACTION is to 0 -> sum or 1-> subtract a step
+        BALL_ACTION  is the rate of how the ball position increasing or decreasing
     */
         
     // increase ball position each time it is shown
-    if (BALL_ACTION == 0){
-        BALL_POSITION[index][0] += 0.01;
-        BALL_POSITION[index][1] += 0.01;
+    BALL_POSITION[index][0] += 0.01 * BALL_ACTION;
+    BALL_POSITION[index][1] += 0.01 * BALL_ACTION;
 
-    } else if(BALL_ACTION == 1){
-        BALL_POSITION[index][0] -= 0.01;
-        BALL_POSITION[index][1] -= 0.01;
-    }
+
+    // if (BALL_ACTION == 0){
+    //     BALL_POSITION[index][0] += 0.01;
+    //     BALL_POSITION[index][1] += 0.01;
+
+    // } else if(BALL_ACTION == 1){
+    //     BALL_POSITION[index][0] -= 0.01;
+    //     BALL_POSITION[index][1] -= 0.01;
+    // }
 
     // if it reach the borders
     if (BALL_POSITION[index][0] >= BORDER || BALL_POSITION[index][0] <= -1* BORDER){
