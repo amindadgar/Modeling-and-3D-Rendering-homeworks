@@ -103,8 +103,12 @@ void reset_ball_positions(){
     BALL_POSITION[14][0] = 0;
     BALL_POSITION[14][1] = 0.04;
 
-    // Also reset the ball action
+    // reset the ball action
     BALL_ACTION = -1.0;
+
+    // reset the steps
+    STEP_X = 0.01;
+    STEP_Y = 0.01;
 
 }
 
@@ -251,7 +255,6 @@ int change_ball_action( float player_y1, float player_y2,float player_x1, float 
 
     if ( (player_y1 < ball_y && ball_y < player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
 
-        // TODO: Changing steps here will corrupt the ball shape!!!!!! FIX THIS
         // change the way ball is going
         STEP_X = -1 * (player_y1 - ball_y) / 10;
         return BALL_ACTION * -1;
@@ -270,17 +273,17 @@ void check_ball_hit_player(){
     */
 
    // 15 is the ball vertexes (array) length
-   for (int i = 0; i < 15; i++){
+   for (int index = 0; index < 15; index++){
        // to check the changes in action
        // if the action was changed, break the loop
        int ball_new_action = BALL_ACTION;
 
         // If the x of the ball was negative
         // then there's a chance for it to hit the first player 
-        if( BALL_POSITION[i][0] < 0){
+        if( BALL_POSITION[index][0] < 0){
             // check the first player
             ball_new_action = change_ball_action(PLAYER_ONE_POSIOTION[0][1], PLAYER_ONE_POSIOTION[1][1],
-             PLAYER_ONE_POSIOTION[0][0], PLAYER_ONE_POSIOTION[2][0],  BALL_POSITION[i][0], BALL_POSITION[i][1] );
+             PLAYER_ONE_POSIOTION[0][0], PLAYER_ONE_POSIOTION[2][0],  BALL_POSITION[index][0], BALL_POSITION[index][1] );
 
             if( ball_new_action != BALL_ACTION){
                 BALL_ACTION = ball_new_action;
@@ -290,7 +293,7 @@ void check_ball_hit_player(){
         } else {
             // check the second player
             ball_new_action = change_ball_action(PLAYER_TWO_POSIOTION[0][1], PLAYER_TWO_POSIOTION[1][1],
-                 PLAYER_TWO_POSIOTION[2][0], PLAYER_TWO_POSIOTION[0][0] , BALL_POSITION[i][0], BALL_POSITION[i][1]);
+                 PLAYER_TWO_POSIOTION[2][0], PLAYER_TWO_POSIOTION[0][0] , BALL_POSITION[index][0], BALL_POSITION[index][1]);
 
             if( ball_new_action != BALL_ACTION ){
                 BALL_ACTION = ball_new_action;
@@ -312,21 +315,64 @@ void change_ball_position(int index){
     BALL_POSITION[index][0] += STEP_X * BALL_ACTION;
     BALL_POSITION[index][1] += STEP_Y * BALL_ACTION;
 
+}
+int check_ball_hit_upper_bound(int index){
+    /*
+        check upper bounds if the ball hits it or not
+
+        return 1 if the ball hits the upper bounds
+    */
+    
+    if(BALL_POSITION[index][1] >= BORDER || BALL_POSITION[index][1] <= -1* BORDER){
+
+        STEP_Y = STEP_Y * -1;
+        STEP_X = STEP_X * -1;
+
+        return 1;
+
+    } else
+        return 0;
+}
+
+int check_player_win_lose(int index){
+    /*
+        check weather the player win or lose the round 
+
+        return 1 if the ball hits the sides
+    */
     // if it reach the borders
     if (BALL_POSITION[index][0] >= BORDER || BALL_POSITION[index][0] <= -1* BORDER){
         reset_ball_positions();
 
         reset_ball(DEBUG);
-    } else if(BALL_POSITION[index][1] >= BORDER || BALL_POSITION[index][1] <= -1* BORDER){
-        // BALL_ACTION = BALL_ACTION * -1;
+        return 1;
+    } else 
+        return 0;
+}
+void check_ball_conditions(){
+    /*
+        check all the conditions 
+        ball hits the boundaries or another player
 
-        // TODO: Changing steps here will corrupt the ball shape!!!!!! FIX THIS
-        STEP_Y = STEP_Y * -1;
-        STEP_X = STEP_X * -1;
+    */
+
+    for(int i=0; i<15; i++){
+        if( check_ball_hit_upper_bound(i))
+            break;
     }
 
-}
+    for(int i=0; i<15;i++){
+        if(check_player_win_lose(i))
+            break;
+    }
 
+    check_ball_hit_player();
+
+    for(int i=0; i<15;i++){
+        // animate the ball moving
+       change_ball_position(i);
+    }
+}
 void display_ball(){
     /*
         display the ball and move its position
@@ -340,15 +386,11 @@ void display_ball(){
            BALL_POSITION[i][1]);
 
        print_ball_positions(BALL_POSITION[i][0], BALL_POSITION[i][1], i, DEBUG);
-
-       // change the ball in the way it is going
-       change_ball_position(i);
-
    }
    glEnd();
     
-    // check if the ball that hits the player or not
-    check_ball_hit_player();
+    // check if the conditions
+    check_ball_conditions();
 
    glColor3f(0, 0.0, 0.0);
 
