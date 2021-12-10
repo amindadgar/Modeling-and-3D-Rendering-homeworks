@@ -33,7 +33,7 @@ void reset_ball(int debug_mode){
     
 }
 
-void print_input_player_error(int number, int debug_mode){
+void print_input_player_error(int number){
     /*
         if player number was an integer beside 0 and 1, raise an error and close the program
     */
