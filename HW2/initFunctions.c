@@ -7,7 +7,11 @@
 #define BORDER 0.9
 
 // this is the rate of ball moving
-int BALL_ACTION = -1;
+float BALL_ACTION = -1.0;
+
+// the steps for changing ball position
+float STEP_X = 0.01;
+float STEP_Y = 0.01;
 
 // default value is zero, DON'T CHANGE THIS VALUE!!!!
 // if you want to enable debugging change this in the main.c function
@@ -43,18 +47,11 @@ float PLAYER_ONE_POSIOTION[4][2] = {
     }; 
 
 // the second player position
-// float PLAYER_TWO_POSIOTION[4][2] = {
-//     {0.8, -0.15},
-//     {0.8,  0.15},
-//     {0.75,  0.15},
-//     {0.75, -0.15}
-//     }; 
-
 float PLAYER_TWO_POSIOTION[4][2] = {
-    {0.8, 0.55},
-    {0.8,  0.85},
-    {0.75,  0.85},
-    {0.75, 0.55}
+    {0.8, -0.15},
+    {0.8,  0.15},
+    {0.75,  0.15},
+    {0.75, -0.15}
     }; 
 
 void reset_ball_positions(){
@@ -105,6 +102,9 @@ void reset_ball_positions(){
 
     BALL_POSITION[14][0] = 0;
     BALL_POSITION[14][1] = 0.04;
+
+    // Also reset the ball action
+    BALL_ACTION = -1.0;
 
 }
 
@@ -244,17 +244,18 @@ void display_squares(){
 
 
 int change_ball_action( float player_y1, float player_y2,float player_x1, float player_x2,  float ball_x,float ball_y ){
+    /*
+        if the y of the ball was between the y of the player position ( Also ball x position was between player's x )
+        else return the same ball action
+    */
 
-    // if the y of the ball was between the y of the player position ( Also ball x position was between player's x )
-    // else return the same ball action
     if ( (player_y1 < ball_y && ball_y < player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
 
+        // TODO: Changing steps here will corrupt the ball shape!!!!!! FIX THIS
+        // change the way ball is going
+        STEP_X = -1 * (player_y1 - ball_y) / 10;
         return BALL_ACTION * -1;
-        // if (BALL_ACTION  < 0){
-        //     return BALL_ACTION * -1;
-        // } else{
-        //     return BALL_ACTION;
-        // }
+
     } else 
         return BALL_ACTION;
 }
@@ -308,24 +309,20 @@ void change_ball_position(int index){
     */
         
     // increase ball position each time it is shown
-    BALL_POSITION[index][0] += 0.01 * BALL_ACTION;
-    BALL_POSITION[index][1] += 0.01 * BALL_ACTION;
-
-
-    // if (BALL_ACTION == 0){
-    //     BALL_POSITION[index][0] += 0.01;
-    //     BALL_POSITION[index][1] += 0.01;
-
-    // } else if(BALL_ACTION == 1){
-    //     BALL_POSITION[index][0] -= 0.01;
-    //     BALL_POSITION[index][1] -= 0.01;
-    // }
+    BALL_POSITION[index][0] += STEP_X * BALL_ACTION;
+    BALL_POSITION[index][1] += STEP_Y * BALL_ACTION;
 
     // if it reach the borders
     if (BALL_POSITION[index][0] >= BORDER || BALL_POSITION[index][0] <= -1* BORDER){
         reset_ball_positions();
 
         reset_ball(DEBUG);
+    } else if(BALL_POSITION[index][1] >= BORDER || BALL_POSITION[index][1] <= -1* BORDER){
+        // BALL_ACTION = BALL_ACTION * -1;
+
+        // TODO: Changing steps here will corrupt the ball shape!!!!!! FIX THIS
+        STEP_Y = STEP_Y * -1;
+        STEP_X = STEP_X * -1;
     }
 
 }
