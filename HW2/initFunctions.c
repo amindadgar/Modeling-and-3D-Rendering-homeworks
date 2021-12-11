@@ -17,6 +17,23 @@ float STEP_Y = 0.01;
 // if you want to enable debugging change this in the main.c function
 int DEBUG = 0;
 
+// scores of the players
+int score[2] = {0, 0};
+
+// change the difficulty of the game by changing its speed
+// 1 -> easy, 2 -> medium, 3 -> Hard
+int GAME_SPEED = 1;
+
+// id of each menu
+#define MENU_EXIT 0
+#define MENU_START_OVER 1
+#define MENU_LEVEL 2
+
+// level submenu IDs
+#define SUBMENU_LEVEL_EASY 3
+#define SUBMENU_LEVEL_MEDIUM 4
+#define SUBMENU_LEVEL_HARD 5
+
 
 // the ball initializing position
 float BALL_POSITION[15][2] = {
@@ -145,6 +162,13 @@ void reset_player_positions(){
 
 }
 
+void reset_scores(){
+    /*
+        reset the scores of the players
+    */
+   score[0] = 0;
+   score[1] = 0;
+}
 void change_player_position(int player, int position){
     /*
         player == 1 is player_one
@@ -286,6 +310,7 @@ void check_ball_hit_player(){
              PLAYER_ONE_POSIOTION[0][0], PLAYER_ONE_POSIOTION[2][0],  BALL_POSITION[index][0], BALL_POSITION[index][1] );
 
             if( ball_new_action != BALL_ACTION){
+                // printf("Changing player 1 action, index:%d\n", index);
                 BALL_ACTION = ball_new_action;
                 break;
             }
@@ -303,17 +328,18 @@ void check_ball_hit_player(){
    }
 } 
 
-void change_ball_position(int index){
+void change_ball_position(){
     /*
         change the ball in the way it is going
         index is the index of the ball
 
         BALL_ACTION  is the rate of how the ball position increasing or decreasing
     */
-        
-    // increase ball position each time it is shown
-    BALL_POSITION[index][0] += STEP_X * BALL_ACTION;
-    BALL_POSITION[index][1] += STEP_Y * BALL_ACTION;
+    for(int index = 0; index < 15; index++){
+        // increase ball position each time it is shown
+        BALL_POSITION[index][0] += STEP_X * BALL_ACTION;
+        BALL_POSITION[index][1] += STEP_Y * BALL_ACTION;
+    }
 
 }
 int check_ball_hit_upper_bound(int index){
@@ -368,10 +394,8 @@ void check_ball_conditions(){
 
     check_ball_hit_player();
 
-    for(int i=0; i<15;i++){
-        // animate the ball moving
-       change_ball_position(i);
-    }
+    // animate the ball moving
+    change_ball_position();
 }
 void display_ball(){
     /*
@@ -407,5 +431,97 @@ void display_game_window(){
         glVertex2f(BORDER, BORDER);
         glVertex2f(BORDER, -1 * BORDER);
     glEnd();
+
+}
+void print_scores(){
+    /* 
+        print scores
+    */
+
+    // set the color to blue at first
+    glColor3f(0, 0, 1);
+
+    // set the text position
+    glRasterPos2d(0,0.9);
+
+    // our scores are between 0 to 9
+    // to print numbers we need to sum it with 48 ( See ascii table )
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[0] + 48 );
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '-');
+
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[1] + 48);
+
+    // reset Color to default black
+    glColor3f(0,0,0);
+
+}
+
+void menu_callback(int id){
+    /*
+        Menu callback function
+    */
+    switch (id)
+    {
+    case 0:
+        exit(0);
+        break;
+    case 1:
+        reset_ball_positions();
+        reset_player_positions();
+        reset_scores();
+        break;
+
+    case 2:
+        break;
+    
+    default:
+        break;
+    }
+
+}
+void sub_menu_callback(int id){
+    /*
+        the submenu for changing the game level to easy/medium/hard
+    */
+    switch (id)
+    {
+    case SUBMENU_LEVEL_EASY:
+        GAME_SPEED = 1;
+        break;
+    case SUBMENU_LEVEL_MEDIUM:
+        GAME_SPEED = 2;
+        break;
+    case SUBMENU_LEVEL_HARD:
+        GAME_SPEED = 3;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void create_menu(char title1[], char title2[], char title3[]){
+    /*
+        Create the menu
+        title1 must be "exit" or other synonyms
+        title2 must be "reset game" or other its synonyms
+        title3 must be "game level" or other its synonyms
+
+        the conditions above for title is because each menu job is to do the requested works
+    */
+
+    // first we create the submenu for it
+    int submenu_level = glutCreateMenu(sub_menu_callback);
+    glutAddMenuEntry("Easy", SUBMENU_LEVEL_EASY);
+    glutAddMenuEntry("Medium", SUBMENU_LEVEL_MEDIUM);
+    glutAddMenuEntry("Hard", SUBMENU_LEVEL_HARD);
+
+
+    glutCreateMenu(menu_callback);
+    glutAddMenuEntry(title1, MENU_EXIT);
+    glutAddMenuEntry(title2, MENU_START_OVER);
+    glutAddSubMenu(title3, submenu_level);
+
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 }

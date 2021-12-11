@@ -8,16 +8,17 @@
 
 
 // to enable debugging assign any number rather than zero to this in the main function
+// variable from initFunctions.c
 extern int DEBUG;
 
-// scores for each player
-int score[2] = {0, 0};
+// to change the speed of the game ( changing game difficulty )
+// variable from initFunctions.c
+extern int GAME_SPEED;
 
 
 void display_objects(int info);
 void init_display();
 void keyboardCallbackFunction(unsigned char key, int x, int y);
-void print_scores();
 
 int main(int argc, char** argv){
     glutInit(&argc, argv);
@@ -30,34 +31,12 @@ int main(int argc, char** argv){
     // DEBUG = 1;
     
     init_display();
-    print_scores();
     glutKeyboardFunc(keyboardCallbackFunction);
 
     glutMainLoop();
 
 }
-void print_scores(){
-    /* 
-        print scores
-    */
 
-    // set the color to blue at first
-    glColor3f(0, 0, 1);
-
-    // set the text position
-    glRasterPos2d(0,0.9);
-
-    // our scores are between 0 to 9
-    // to print numbers we need to sum it with 48 ( See ascii table )
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[0] + 48 );
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '-');
-
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[1] + 48);
-
-    // reset Color to default black
-    glColor3f(0,0,0);
-
-}
 void init_display(){
     /*
         initialize the display
@@ -70,6 +49,8 @@ void init_display(){
     glClearColor(1,1,1,1);
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(0,0,0);
+
+    create_menu( (char *)"Quit", (char *)"Reset Game", (char *)"Game Level");
     
 
     // Run the game using glutTimer callback function
@@ -92,7 +73,7 @@ void display_objects(int info){
 
 
     glFlush();
-    glutTimerFunc(20, display_objects, 0);
+    glutTimerFunc(30 / GAME_SPEED, display_objects, 0);
 
 }
 
