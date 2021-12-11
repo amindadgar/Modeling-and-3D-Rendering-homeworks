@@ -2,6 +2,7 @@
 #include "initFunctions.h"
 #include "debuggingFunctions.h"
 #include <stdio.h>
+#include <time.h>
 
 // define the border value of the window
 #define BORDER 0.9
@@ -360,6 +361,92 @@ int check_ball_hit_upper_bound(int index){
         return 0;
 }
 
+void print_winner_text(char player_num){
+    /*
+        print the player1 winner or player two text
+    */
+
+    glColor3f(1, 0.5, 0);
+
+    // set the text position
+    glRasterPos2d(0,0.5);
+
+    // print the string "player 1 won!" or "player 2 won!"
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'p');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'l');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'a');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'y');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'e');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'r');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, player_num);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'w');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'o');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'n');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
+
+    // reset Color to default black
+    glColor3f(0,0,0);
+
+    glFlush();
+    reset_ball_positions();
+    reset_player_positions();
+    reset_scores();
+}
+
+void print_drawn_text(){
+    /*
+        If the scores was equal write drawn on screen
+    */
+
+    glColor3f(1, 0.5, 0);
+
+    // set the text position
+    glRasterPos2d(0,0.5);
+
+    // print the string "player 1 won!" or "player 2 won!"
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'D');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'R');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'A');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'W');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'N');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
+
+    // reset Color to default black
+    glColor3f(0,0,0);
+
+    glFlush();
+    reset_ball_positions();
+    reset_player_positions();
+    reset_scores();
+
+}
+
+void print_winner(char player){
+    /*
+        choose which player won
+    */
+    if( score[0] < score[1]){
+        print_winner_text(player);
+    } else if(score[1] > score[0]){
+        print_winner_text(player);
+    } else {
+        print_drawn_text();
+    }
+}
+
+void end_game(char player){
+    /*
+        If any players score go beyond 9 end the game and restart it
+
+        player is 1 or 2 charactar
+    */
+
+   print_winner(player);
+
+}
+
 int check_player_win_lose(int index){
     /*
         check weather the player win or lose the round 
@@ -367,14 +454,32 @@ int check_player_win_lose(int index){
         return 1 if the ball hits the sides
     */
     // if it reach the borders
-    if (BALL_POSITION[index][0] >= BORDER || BALL_POSITION[index][0] <= -1* BORDER){
-        reset_ball_positions();
+    if (BALL_POSITION[index][0] >= BORDER){
 
+        reset_ball_positions();
         reset_ball(DEBUG);
+        if (score[1] +1 > 9)
+            end_game('1');
+        else 
+            score[1] += 1;
+    
+        return 1;
+
+    } else if(BALL_POSITION[index][0] <= -1* BORDER){
+
+        reset_ball_positions();
+        reset_ball(DEBUG);
+ 
+        if(score[0] + 1 > 9)
+            end_game('2');
+        else
+            score[0] +=1;
+
         return 1;
     } else 
         return 0;
 }
+
 void check_ball_conditions(){
     /*
         check all the conditions 
@@ -470,10 +575,6 @@ void menu_callback(int id){
         reset_player_positions();
         reset_scores();
         break;
-
-    case 2:
-        break;
-    
     default:
         break;
     }
