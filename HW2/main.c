@@ -68,7 +68,6 @@ void display_objects(int info){
     display_game_window();
     display_squares();
     display_ball();
-    display_game_window();
     print_scores();
 
 

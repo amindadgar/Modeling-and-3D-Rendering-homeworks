@@ -3,16 +3,20 @@
 #include "debuggingFunctions.h"
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 // define the border value of the window
 #define BORDER 0.9
 
 // this is the rate of ball moving
-float BALL_ACTION = -1.0;
+int BALL_ACTION = -1.0;
 
 // the steps for changing ball position
 float STEP_X = 0.01;
-float STEP_Y = 0.05;
+float STEP_Y = 0.00;
+
+// The rate of changing ball steps
+int STEP_CHANGE_RATE = 4;
 
 // default value is zero, DON'T CHANGE THIS VALUE!!!!
 // if you want to enable debugging change this in the main.c function
@@ -278,10 +282,17 @@ int change_ball_action( float player_y1, float player_y2,float player_x1, float 
         else return the same ball action
     */
 
-    if ( (player_y1 < ball_y && ball_y < player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
-
+    if ( (player_y1 <= ball_y && ball_y <= player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
         // change the way ball is going
-        STEP_X = -1 * (player_y1 - ball_y) / 10;
+        
+        // this condition is made to avoid making steps zero
+        if( fabs(player_y1 - ball_y) > 0.00001 ){
+            STEP_Y = -1 * ((player_y1 - ball_y) / 50) * STEP_CHANGE_RATE;
+            STEP_X = -1 * ((player_y1 - ball_y) / 10);
+
+            printf("changing STEP_X, player_y1, ball_y: (%f,%f)\n",STEP_X, STEP_Y);
+
+        }
         return BALL_ACTION * -1;
 
     } else 
@@ -298,7 +309,9 @@ void check_ball_hit_player(){
     */
 
    // 15 is the ball vertexes (array) length
-   for (int index = 0; index < 15; index++){
+//    for (int index = 0; index < 15; index++){
+   for (int index = 2; index < 15; index+=8){
+
        // to check the changes in action
        // if the action was changed, break the loop
        int ball_new_action = BALL_ACTION;
@@ -311,7 +324,6 @@ void check_ball_hit_player(){
              PLAYER_ONE_POSIOTION[0][0], PLAYER_ONE_POSIOTION[2][0],  BALL_POSITION[index][0], BALL_POSITION[index][1] );
 
             if( ball_new_action != BALL_ACTION){
-                // printf("Changing player 1 action, index:%d\n", index);
                 BALL_ACTION = ball_new_action;
                 break;
             }
@@ -336,6 +348,7 @@ void change_ball_position(){
 
         BALL_ACTION  is the rate of how the ball position increasing or decreasing
     */
+
     for(int index = 0; index < 15; index++){
         // increase ball position each time it is shown
         BALL_POSITION[index][0] += STEP_X * BALL_ACTION;
@@ -353,16 +366,13 @@ int check_ball_hit_upper_bound(int index){
     if(BALL_POSITION[index][1] >= BORDER){
 
         STEP_Y = STEP_Y * -1;
-        STEP_X = STEP_X * 1;
-
         return 1;
 
     } else if(BALL_POSITION[index][1] <= -1* BORDER){
         
         STEP_Y = STEP_Y * -1;
-        STEP_X = STEP_X * 1;
-
         return 1;
+
     }else
         return 0;
 }
@@ -505,8 +515,7 @@ void check_ball_conditions(){
 
     check_ball_hit_player();
 
-    // animate the ball moving
-    change_ball_position();
+
 }
 void display_ball(){
     /*
@@ -526,6 +535,9 @@ void display_ball(){
     
     // check if the conditions
     check_ball_conditions();
+
+    // animate the ball moving
+    change_ball_position();
 
    glColor3f(0, 0.0, 0.0);
 
@@ -557,10 +569,10 @@ void print_scores(){
 
     // our scores are between 0 to 9
     // to print numbers we need to sum it with 48 ( See ascii table )
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[0] + 48 );
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[1] + 48 );
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '-');
 
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[1] + 48);
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, score[0] + 48);
 
     // reset Color to default black
     glColor3f(0,0,0);
