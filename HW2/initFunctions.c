@@ -12,7 +12,7 @@ float BALL_ACTION = -1.0;
 
 // the steps for changing ball position
 float STEP_X = 0.01;
-float STEP_Y = 0.01;
+float STEP_Y = 0.05;
 
 // default value is zero, DON'T CHANGE THIS VALUE!!!!
 // if you want to enable debugging change this in the main.c function
@@ -126,7 +126,7 @@ void reset_ball_positions(){
 
     // reset the steps
     STEP_X = 0.01;
-    STEP_Y = 0.01;
+    STEP_Y = 0.00;
 
 }
 
@@ -347,17 +347,23 @@ int check_ball_hit_upper_bound(int index){
     /*
         check upper bounds if the ball hits it or not
 
-        return 1 if the ball hits the upper bounds
+        return 1 if the ball hits the upper or lower bounds
     */
     
-    if(BALL_POSITION[index][1] >= BORDER || BALL_POSITION[index][1] <= -1* BORDER){
+    if(BALL_POSITION[index][1] >= BORDER){
 
         STEP_Y = STEP_Y * -1;
-        STEP_X = STEP_X * -1;
+        STEP_X = STEP_X * 1;
 
         return 1;
 
-    } else
+    } else if(BALL_POSITION[index][1] <= -1* BORDER){
+        
+        STEP_Y = STEP_Y * -1;
+        STEP_X = STEP_X * 1;
+
+        return 1;
+    }else
         return 0;
 }
 
