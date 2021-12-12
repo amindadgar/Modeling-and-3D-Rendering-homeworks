@@ -1,9 +1,6 @@
 #include <GL/glut.h>
 #include "initFunctions.h"
 #include "debuggingFunctions.h"
-#include <stdio.h>
-#include <time.h>
-#include <math.h>
 
 // define the border value of the window
 #define BORDER 0.9
@@ -275,23 +272,34 @@ void display_squares(){
 
 }
 
-
+double compare_float(float value1, float value2){
+    /*
+        compare value1 and value2 and return the difference in double format
+    */
+    double data;
+    data = value1 - value2;
+    
+    return data;
+}
 int change_ball_action( float player_y1, float player_y2,float player_x1, float player_x2,  float ball_x,float ball_y ){
     /*
         if the y of the ball was between the y of the player position ( Also ball x position was between player's x )
         else return the same ball action
+
+        player_y2 > player_y1 ( y2 is the upper bound of the player's square )
+        player_x2 > player_x1 ( x2 is the upper bound of the player's square )
     */
 
-    if ( (player_y1 <= ball_y && ball_y <= player_y2) && (player_x1 <= ball_x && ball_x <= player_x2) ){
+
+    if( ( compare_float(ball_x, player_x2) > 0 && compare_float(ball_x, player_x2) < 0.006) ){
+
+
         // change the way ball is going
         
         // this condition is made to avoid making steps zero
-        if( fabs(player_y1 - ball_y) > 0.00001 ){
-            STEP_Y = -1 * ((player_y1 - ball_y) / 50) * STEP_CHANGE_RATE;
-            STEP_X = -1 * ((player_y1 - ball_y) / 10);
-
-            printf("changing STEP_X, player_y1, ball_y: (%f,%f)\n",STEP_X, STEP_Y);
-
+        if( compare_float(ball_y, player_y1 ) > 0.00001 ){
+            STEP_Y = -1 * ((player_y1 - ball_y) / 25) * STEP_CHANGE_RATE;
+            // STEP_X = -1 * ((player_y1 - ball_y) / 50)* STEP_CHANGE_RATE;
         }
         return BALL_ACTION * -1;
 
@@ -331,7 +339,7 @@ void check_ball_hit_player(){
         } else {
             // check the second player
             ball_new_action = change_ball_action(PLAYER_TWO_POSIOTION[0][1], PLAYER_TWO_POSIOTION[1][1],
-                 PLAYER_TWO_POSIOTION[2][0], PLAYER_TWO_POSIOTION[0][0] , BALL_POSITION[index][0], BALL_POSITION[index][1]);
+                 PLAYER_TWO_POSIOTION[0][0], PLAYER_TWO_POSIOTION[2][0] , BALL_POSITION[index][0], BALL_POSITION[index][1]);
 
             if( ball_new_action != BALL_ACTION ){
                 BALL_ACTION = ball_new_action;
