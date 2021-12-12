@@ -6,7 +6,13 @@ This repository contains the codes for my Modeling and 3D Rendering university c
 
 ### To Run the project
 First of all make sure you've installed g++ compiler and glut library. <br>
-Then to run the project simply use this command: ```g++ HW1.c -o hw1.out -lGL -lGLU -lglut```
+Then to run the project simply use this command: 
+```
+g++ HW1.c -o hw1.out -lGL -lGLU -lglut
+```
+
+### Notes
+The program was made and tested on Ubuntu 20.04 LTS System
 
 ## Homework #2
 **Question:** Please write a C code to implement a Ping-Pong game with OpenGL which works as follows:
@@ -22,6 +28,21 @@ rocket when the ball hit them.
 "Level". "Level" opens a sub menu with three entries of "Easy", "Medium" and "Hard".
 9. The initial speed of ball, is adjusted based on the level selected.
 10. The current scores of two players should be displayed somewhere on the display.
+
+**Answer:** [Homework 2 Codes](https://github.com/amindadgar/3D-modeling-and-rendering-homeworks/tree/main/HW2)
+
+### To Run the project
+Use The command:
+```
+g++ main.c initFunctions.c debuggingFunctions.c -o main.out -lGL -lGLU -lglut
+```
+Then To Run:
+```
+./main.out
+```
+
+### Notes
+The program was made and tested on Ubuntu 20.04 LTS System
 
 ## Course-Examples
 This directory contains the examples recieved from Professor of this course.
