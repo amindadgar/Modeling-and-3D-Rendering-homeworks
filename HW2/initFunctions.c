@@ -73,9 +73,11 @@ float PLAYER_TWO_POSIOTION[4][2] = {
     {0.75, -0.15}
     }; 
 
-void reset_ball_positions(){
+void reset_ball_positions(char position){
     /*
         if ball hits the border reset it
+
+        reset and start from the ball from right or left ( 'r' character and 'l' character)
     */
     BALL_POSITION[0][0] = -0.03;
     BALL_POSITION[0][1] = 0.03;
@@ -126,8 +128,14 @@ void reset_ball_positions(){
     BALL_ACTION = -1.0;
 
     // reset the steps
-    STEP_X = 0.01;
-    STEP_Y = 0.00;
+    if (position == 'r'){
+        STEP_X = -0.01;
+        STEP_Y = 0.00;
+    } else
+        STEP_X = 0.01;
+        STEP_Y = 0.00;
+    
+    
 
 }
 
@@ -291,7 +299,8 @@ int change_ball_action( float player_y1, float player_y2,float player_x1, float 
     */
 
 
-    if( ( compare_float(ball_x, player_x2) > 0 && compare_float(ball_x, player_x2) < 0.006) ){
+    if( ( compare_float(ball_x, player_x2) > 0 && compare_float(ball_x, player_x2) < 0.006) && 
+            compare_float(ball_y, player_y1) > 0.005 && compare_float(ball_y, player_y2) <= 0  ){
 
 
         // change the way ball is going
@@ -385,6 +394,17 @@ int check_ball_hit_upper_bound(int index){
         return 0;
 }
 
+char check_round_winner(){
+    /*
+        check wether player1 wins or not to reset the ball to go right side or left
+    */
+   if (score[0] >= score[1]){
+       return 'r';
+   } else 
+    return 'l';
+   
+}
+
 void print_winner_text(char player_num){
     /*
         print the player1 winner or player two text
@@ -414,7 +434,9 @@ void print_winner_text(char player_num){
     glColor3f(0,0,0);
 
     glFlush();
-    reset_ball_positions();
+
+    char winner = check_round_winner();
+    reset_ball_positions(winner);
     reset_player_positions();
     reset_scores();
 }
@@ -441,7 +463,8 @@ void print_drawn_text(){
     glColor3f(0,0,0);
 
     glFlush();
-    reset_ball_positions();
+    char winner = check_round_winner();
+    reset_ball_positions(winner);
     reset_player_positions();
     reset_scores();
 
@@ -479,8 +502,8 @@ int check_player_win_lose(int index){
     */
     // if it reach the borders
     if (BALL_POSITION[index][0] >= BORDER){
-
-        reset_ball_positions();
+    
+        reset_ball_positions('r');
         reset_ball(DEBUG);
         if (score[1] +1 > 9)
             end_game('1');
@@ -491,7 +514,7 @@ int check_player_win_lose(int index){
 
     } else if(BALL_POSITION[index][0] <= -1* BORDER){
 
-        reset_ball_positions();
+        reset_ball_positions('l');
         reset_ball(DEBUG);
  
         if(score[0] + 1 > 9)
@@ -597,7 +620,7 @@ void menu_callback(int id){
         exit(0);
         break;
     case 1:
-        reset_ball_positions();
+        reset_ball_positions('r');
         reset_player_positions();
         reset_scores();
         break;
