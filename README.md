@@ -40,6 +40,19 @@ Then To Run:
 ```
 ./main.out
 ```
+## Homework #3
+**Question:** Create a shader base format of Homework number 2. <br>
+**Answer:** [Homework 3 Codes](https://github.com/amindadgar/3D-modeling-and-rendering-homeworks/blob/07c2fca854da4ecfaa6f17c0ef3d9bfcce638886/HW3)
+
+### To Run the project
+Use The command:
+```
+g++ main.c initFunctions.c debuggingFunctions.c -o main.out -lGL -lGLU -lglut -lGLEW
+```
+Then To Run:
+```
+./main.out
+```
 
 ### Notes
 The program was made and tested on Ubuntu 20.04 LTS System
