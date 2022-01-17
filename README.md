@@ -60,5 +60,5 @@ The program was made and tested on Ubuntu 20.04 LTS System
 ## Course-Examples
 This directory contains the examples recieved from Professor of this course.
 
-## Course Source
+## Course Reference
 The course reference is the book: Edward Angel, Dave Shreiner - Interactive Computer Graphics_ A Top-Down Approach with Shader-Based OpenGL, 6th Edition  -Addison Wesley (2011).
